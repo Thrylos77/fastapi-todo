@@ -1,10 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 from uuid import UUID
 from typing import Optional
-from ..models.todo import Priority
+from app.models.todo import Priority
 from datetime import datetime
 
 class TodoBase(BaseModel):
+    title: str
     description: str
     due_date: Optional[datetime] = None
     priority: Priority = Priority.Normal

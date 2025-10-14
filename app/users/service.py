@@ -2,10 +2,10 @@ from uuid import UUID, uuid4
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..models.user import User
+from app.models.user import User
 from . import model
-from ..core.exceptions import UserNotFoundError, InvalidPasswordError, PasswordMismatchError
-from ..auth.service import verify_password, get_hashed_password
+from app.core.exceptions import UserNotFoundError, InvalidPasswordError, PasswordMismatchError
+from app.auth.service import verify_password, get_hashed_password
 
 import logging
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Enum
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from datetime import datetime, timezone
-from ..db.core import Base
+from app.db.core import Base
 
 import uuid
 import enum
@@ -18,6 +18,7 @@ class Todo(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     due_date = Column(DateTime, nullable=True)
     is_completed = Column(Boolean, default=False)
@@ -26,5 +27,5 @@ class Todo(Base):
     priority = Column(Enum(Priority), default=Priority.Normal)
 
     def __str__(self):
-        return f"<Todo(description='{self.description}', due_date='{self.due_date}', is_completed='{self.is_completed}', priority='{self.priority}')>"
+        return f"<Todo(title='{self.title}', description='{self.description}', due_date='{self.due_date}', is_completed='{self.is_completed}', priority='{self.priority}')>"
     

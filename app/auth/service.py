@@ -3,13 +3,13 @@ from uuid import UUID, uuid4
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from ..models.user import User
+from app.models.user import User
 from . import model
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jwt import PyJWTError
 from datetime import datetime, timedelta, timezone
-from ..core.exceptions import AuthenticationError
+from app.core.exceptions import AuthenticationError
 
 from dotenv import load_dotenv
 
@@ -26,18 +26,23 @@ if not SECRET_KEY or not ALGORITHM or not ACCESS_TOKEN_EXPIRE_MINUTES:
     raise ValueError("SECRET_KEY, ALGORITHM, and ACCESS_TOKEN_EXPIRE_MINUTES must be set in environment variables.")
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
-bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+# CryptContext : argon2 firt, bcrypt for fallback (verify old hashes)
+pwd_context = CryptContext(
+    schemes=['argon2', 'bcrypt'], 
+    deprecated='auto'   # mark older schemes as deprecated so passlib can suggest upgrade
+)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(plain_password, hashed_password)
 
 def get_hashed_password(password: str) -> str:
-    return bcrypt_context.hash(password)
+    return pwd_context.hash(password)
 
-def authenticate_user(db: Session, username: str, email: str, password: str) -> User | bool:
-    user = db.query(User).filter((User.username == username) | (User.email == email)).first()
+def authenticate_user(db: Session, identifier: str, password: str) -> User | bool:
+    user = db.query(User).filter((User.username == identifier) | (User.email == identifier)).first()
     if not user or not verify_password(password, user.hashed_password):
-        logging.warning(f"Authentication failed for user: {username} or email: {email}")
+        logging.warning(f"Authentication failed for user with this identifier : {identifier} ")
         return False
     return user
 

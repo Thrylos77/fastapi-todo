@@ -3,10 +3,10 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 
-from ..models.todo import Todo
+from app.models.todo import Todo
 from . import model
-from ..auth.model import TokenData
-from ..core.exceptions import TodoCreationError, TodoNotFoundError
+from app.auth.model import TokenData
+from app.core.exceptions import TodoCreationError, TodoNotFoundError
 
 import logging
 

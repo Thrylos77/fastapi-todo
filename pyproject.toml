@@ -16,9 +16,9 @@ slowapi = "^0.1.9"
 python-dotenv = "^1.1.1"
 pyjwt = "^2.10.1"
 passlib = "^1.7.4"
-bcrypt = "^5.0.0"
 python-multipart = "^0.0.20"
 email-validator = "^2.3.0"
+argon2-cffi = "^25.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

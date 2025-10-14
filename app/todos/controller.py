@@ -2,9 +2,9 @@ from fastapi import APIRouter, status
 from typing import List
 from uuid import UUID
 
-from ..db.core import DbSession
+from app.db.core import DbSession
 from . import model, service
-from ..auth.service import CurrentUser
+from app.auth.service import CurrentUser
 
 router = APIRouter(
     prefix="/todos",

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
+from app.db.core import Base
 
 import uuid
-from ..db.core import Base
 
 class User(Base):
     __tablename__ = "users"

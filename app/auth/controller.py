@@ -17,8 +17,9 @@ router = APIRouter(
 async def register_user(request: Request, db: DbSession, 
                         register_user_request: model.RegisterUserRequest):
     service.register_user(db, register_user_request)
+    return {"detail": "User created successfully."}
 
 
-@router.post("/token", response_model=model.Token)
+@router.post("/token", response_model=model.Token, status_code=status.HTTP_200_OK)
 async def login_for_access_token(db: DbSession, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return service.login_for_access_token(db, form_data)

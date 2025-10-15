@@ -14,6 +14,6 @@ app = FastAPI()
 Only uncomment the line below if you want to create new tables automatically.
 Otherwise, the tests will fail if not connected.
 """
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 register_routes(app)

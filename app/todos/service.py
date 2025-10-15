@@ -38,14 +38,18 @@ def get_todo_by_id(current_user: TokenData, db: Session, todo_id: UUID) -> Todo:
 
 def update_todo(current_user: TokenData, db: Session, todo_id: UUID, todo_update: model.TodoCreate) -> Todo:
     todo_data = todo_update.model_dump(exclude_unset=True)
-    todo = db.query(Todo).filter(Todo.id == todo_id).filter(Todo.user_id == current_user.get_uuid()).update(todo_data)
-    db.commit()
-    db.refresh(todo)
+    todo = db.query(Todo).filter(Todo.id == todo_id).filter(Todo.user_id == current_user.get_uuid()).first()
     if not todo:
         logging.warning(f"Todo not found for update: {todo_id} for user: {current_user.get_uuid()}")
         raise TodoNotFoundError()
+
+    for key, value in todo_data.items():
+        setattr(todo, key, value)
+
+    db.commit()
+    db.refresh(todo)
     logging.info(f"Todo updated successfully: {todo.id} for user: {current_user.get_uuid()}")
-    return get_todo_by_id(current_user, db, todo_id)
+    return todo
 
 def complete_todo(current_user: TokenData, db: Session, todo_id: UUID) -> Todo:
     todo = get_todo_by_id(current_user, db, todo_id)
@@ -53,7 +57,7 @@ def complete_todo(current_user: TokenData, db: Session, todo_id: UUID) -> Todo:
         logging.debug(f"Todo {todo_id} already completed")
         return todo
     todo.is_completed = True
-    todo.competed_at = datetime.now(timezone.utc)
+    todo.completed_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(todo)
     logging.info(f"Todo {todo_id} marked as completed by user: {current_user.get_uuid()}")

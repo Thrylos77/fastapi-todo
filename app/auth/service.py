@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jwt import PyJWTError
 from datetime import datetime, timedelta, timezone
-from app.core.exceptions import AuthenticationError
+from app.core.exceptions import AuthenticationError, UserAlreadyExistsError
 
 from dotenv import load_dotenv
 
@@ -66,13 +66,25 @@ def verify_token(token: str) -> model.TokenData:
     return token_data
 
 def register_user(db: Session, user: model.RegisterUserRequest) -> None:
+    existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
+    if existing_user:
+        if existing_user.username == user.username:
+            raise UserAlreadyExistsError(
+                detail=f"User with username '{user.username}' already exists."
+            )
+        if existing_user.email == user.email:
+            raise UserAlreadyExistsError(
+                detail=f"User with email '{user.email}' already exists."
+            )
     try:
+        # Ensure username exists; default to local-part of email when omitted
+        username = user.username or user.email.split("@")[0]
         hashed_password = get_hashed_password(user.password)
         db_user = User(
             id=uuid4(),
             first_name=user.first_name,
             last_name=user.last_name,
-            username=user.username,
+            username=username,
             email=user.email,
             hashed_password=hashed_password
         )

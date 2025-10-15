@@ -39,8 +39,8 @@ def test_user(db_session):
         id=uuid4(),
         first_name="Test",
         last_name="User",
-        username="testuser",
-        email="test@example.com",
+        username="conftest",
+        email="conftest@example.com",
         hashed_password=hashed_password
     )
     return user
@@ -89,8 +89,8 @@ def auth_headers(client, db_session):
         json={
             "first_name": "Test",
             "last_name": "USER",
-            "username": "test",
-            "email": "test.user@example.com",
+            "username": "conftest",
+            "email": "conftest@example.com",
             "password": "password@123"
         }
     )
@@ -100,7 +100,7 @@ def auth_headers(client, db_session):
     response = client.post(
         "/auth/token",
         data={
-            "username": "test",
+            "username": "conftest",
             "password": "password@123",
             "grant_type": "password"
         }

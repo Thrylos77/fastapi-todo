@@ -20,7 +20,7 @@ class TestAuthService:
         db_session.add(test_user)
         db_session.commit()
 
-        user = auth_service.authenticate_user(db_session, "testuser", "password@123")
+        user = auth_service.authenticate_user(db_session, "conftest", "password@123")
         assert user is not False
         assert user.email == test_user.email or user.username == test_user.username
     
@@ -30,7 +30,8 @@ class TestAuthService:
 
         class FormData:
             def __init__(self):
-                self.username = "test@example.com"
+                # authenticate using username (fixture creates username 'conftest')
+                self.username = "conftest"
                 self.password = "password@123"
                 self.scope = ""
                 self.client_id = None
@@ -44,34 +45,34 @@ class TestAuthService:
 @pytest.mark.asyncio
 async def test_register_user(db_session):
     request = RegisterUserRequest(
-        first_name="New",
+        first_name="Test",
         last_name="USER",
-        username="new",
-        email="new@example.com",
+        username="conftest",
+        email="conftest@example.com",
         password="password@123"
     )
     auth_service.register_user(db_session, request)
 
-    user = db_session.query(User).filter_by(email="new@example.com").first()
+    user = db_session.query(User).filter_by(email="conftest@example.com").first()
     assert user is not None
-    assert user.email == "new@example.com"
-    assert user.first_name == "New"
+    assert user.email == "conftest@example.com"
+    assert user.first_name == "Test"
     assert user.last_name == "USER"
-    assert user.username == "new"
+    assert user.username == "conftest"
 
 def test_create_and_verify_token(db_session):
     user_id = uuid4()
-    token = auth_service.create_access_token("test@example.com", "testuser", user_id, timedelta(minutes=30))
+    token = auth_service.create_access_token("conftest@example.com", "conftest", user_id, timedelta(minutes=30))
 
     token_data = auth_service.verify_token(token)
     assert token_data.get_uuid() == user_id
 
     # Test invalid credentials
-    assert auth_service.authenticate_user(db_session, "test@example.com", "wrongpassword") is False
+    assert auth_service.authenticate_user(db_session, "conftest", "wrongpassword") is False
 
     with pytest.raises(AuthenticationError):
         form_data = OAuth2PasswordRequestForm(
-            username="testuser",
+            username="conftest",
             password="wrongpassword",
             scope="",
         )

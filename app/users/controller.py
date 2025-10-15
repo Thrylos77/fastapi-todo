@@ -15,10 +15,10 @@ def get_current_user(current_user: CurrentUser, db: DbSession):
     return service.get_user_by_id(db, current_user.get_uuid())
 
 
-@router.put("/me/change-password", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/change-password", status_code=status.HTTP_200_OK)
 def change_password(
         pwd_change: model.PasswordChange,
         db: DbSession,
         current_user: CurrentUser ):
-
     service.change_password(db, current_user.get_uuid(), pwd_change)
+    return {"detail": "Password changed successfully."}

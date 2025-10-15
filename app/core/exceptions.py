@@ -16,6 +16,9 @@ class TodoCreationError(TodoError):
     def __init__(self, error:str):
         super().__init__(status_code=500, detail=f"Failed to create todo: {error}")
 
+"""
+User related errors
+"""
 class UserError(HTTPException):
     """Base exception for user-related errors."""
     pass
@@ -28,6 +31,10 @@ class UserNotFoundError(UserError):
             message = "User not found."
         super().__init__(status_code=404, detail=message)
 
+class UserAlreadyExistsError(UserError):
+    def __init__(self, detail: str = "User already exists"):
+        super().__init__(status_code=400, detail=detail)
+
 class PasswordMismatchError(UserError):
     def __init__(self):
         super().__init__(status_code=400, detail="Password does not match.")
@@ -37,5 +44,5 @@ class InvalidPasswordError(UserError):
         super().__init__(status_code=401, detail="Invalid password.")
 
 class AuthenticationError(HTTPException):
-    def __init__(self, message: str = "Authentication failed."):
+    def __init__(self, message: str = "Incorrect identifier or password."):
         super().__init__(status_code=401, detail=message)

@@ -9,7 +9,7 @@ RUN pip install poetry
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install dependencies
-COPY pyproject.toml /fastapi-todo/
+COPY pyproject.toml poetry.lock /fastapi-todo/
 
 RUN poetry install --no-interaction --no-root
 

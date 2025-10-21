@@ -103,6 +103,8 @@ The API is versioned under `/v1`.
 │   └── main.py         # Main FastAPI application
 ├── tests/              # Unit tests
 ├── .env.example        # Example environment variables
+├── docker-compose.yml
+├── Dockerfile
 ├── poetry.lock
 ├── pyproject.toml      # Project dependencies
 └── README.md
